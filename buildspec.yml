@@ -1,0 +1,44 @@
+version: 0.2
+
+#env:
+#  shell: shell-tag
+#  variables:
+#    COREOS_ASSEMBLER_BUILD: "coreos"
+#    key: "value"
+#  parameter-store:
+#    key: "value"
+#    key: "value"
+#  exported-variables:
+#    - variable
+#    - variable
+#  secrets-manager:
+#    key: secret-id:json-key:version-stage:version-id
+#  git-credential-helper: no | yes
+
+#proxy:
+#  upload-artifacts: no | yes
+#  logs: no | yes
+
+#batch:
+#  fast-fail: false | true
+  # build-list:
+  # build-matrix:
+  # build-graph:
+
+phases:
+  install:
+    commands:
+      - cosa init --branch stable https://github.com/coreos/fedora-coreos-config
+  build:
+    commands:
+      - cosa fetch
+      - cosa build
+artifacts:
+  files:
+    - coreos/builds/latest/x86_64/*.qcow2
+  discard-paths: yes
+#cache:
+#  paths:
+#    - path
+#    - path
+
