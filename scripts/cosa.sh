@@ -12,7 +12,7 @@ done
 
 cosa init --force /dev/null
 cosa fetch
-#cosa build
+cosa build
 
 [ -L ccos ] && unlink ccos
 ln -s $MOUNTED_COSA_BUILD ccos
