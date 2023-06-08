@@ -26,16 +26,12 @@ version: 0.2
   # build-graph:
 
 phases:
-  install:
-    commands:
-      - cosa init --branch stable https://github.com/coreos/fedora-coreos-config
   build:
     commands:
-      - cosa fetch
-      - cosa build
+      - scripts/cosa.sh
 artifacts:
   files:
-    - coreos/builds/latest/x86_64/*.qcow2
+    - ccos/builds/latest/x86_64/*.qcow2
   discard-paths: yes
 #cache:
 #  paths:
