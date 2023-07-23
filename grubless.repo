@@ -1,0 +1,5 @@
+[grubless]
+name=Fedora CoreOS without Grub
+baseurl=file:///srv/grubless
+enabled=1
+gpgcheck=0

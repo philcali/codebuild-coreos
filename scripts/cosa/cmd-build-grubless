@@ -1,0 +1,15 @@
+#!/usr/bin/bash env
+
+set -euo pipefail
+
+dn=$(dirname "$0")
+
+# HACKS below...
+# Turn off bios boot loader for grubless... use qemu-firmware uefi
+sudo sed -i 's|disk_args=()|disk_args=(--no-x86-bios-bootloader)' \
+    "${dn}"/cmd-buildextend-metal
+# Adjust the size of the ESP... needs to mirror /boot
+sudo sed -i 's|+127M|+384M|' \
+    "${dn}"/create_disk.sh
+# Pipe arguments into the build script proper
+cosa build "$@"

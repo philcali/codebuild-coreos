@@ -1,7 +1,1 @@
-variables:
-  stream: stable
-  prod: true
-
-releasever: 38
-
-include: fedora-coreos-config/manifests/fedora-coreos.yaml
+manifest-fcos.yaml

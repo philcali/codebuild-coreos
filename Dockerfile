@@ -1,6 +1,14 @@
-FROM public.ecr.aws/amazonlinux/amazonlinux:2
+FROM public.ecr.aws/docker/library/fedora:38
 
-RUN amazon-linux-extras enable docker
-RUN yum install -y git docker
+RUN yum install -y \
+    podman \
+    moby-engine \
+    createrepo \
+    systemd-ukify \
+    systemd-boot \
+    sbsigntools \
+    rpmdevtools \
+    rpmlint \
+    git
 
 COPY cosa.sh /usr/bin/cosa

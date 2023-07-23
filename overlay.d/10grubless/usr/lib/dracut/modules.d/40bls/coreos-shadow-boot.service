@@ -1,0 +1,18 @@
+[Unit]
+Description=CoreOS Shadow Boot
+# We run pretty early
+Before=coreos-copy-firstboot-network.service
+Before=coreos-ignition-setup-user.service
+Before=ignition-fetch-offline.service
+After=coreos-gpt-setup.service
+Before=systemd-fsck@dev-disk-by\x2dlabel-boot.service
+Requires=dev-disk-by\x2dlabel-boot.device
+After=dev-disk-by\x2dlabel-boot.device
+Requires=dev-disk-by\x2dlabel-EFI\x2dSYSTEM.device
+After=dev-disk-by\x2dlabel-EFI\x2dSYSTEM.device
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/coreos-shadow-boot
+MountFlags=slave

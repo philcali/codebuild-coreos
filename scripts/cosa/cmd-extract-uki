@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+# Tool for extracting all of the components from a qcow2 image
+# for producing a Unified Kernel Image.
+# cosa extract-uki
+#
+# The resulting tmp/build will contain:
+# uki/initramfs.img
+# uki/cmdline
+# uki/vmlinuz
+# uki/os-release
+
+
+dn=$(dirname "$0")
+. "${dn}"/cmdlib.sh
+. "${dn}"/libguestfish.sh
+
+prepare_build
+
+previous_build=$(get_latest_build)
+previous_qemu=
+if [ -z "${previous_build}" ]; then
+    fatal "previous build required for extracting a UKI"
+fi
+previous_builddir=$(get_build_dir "${previous_build}")
+previous_commit=$(jq -r '.["ostree-commit"]' < "${previous_builddir}/meta.json")
+previous_qemu=$(jq -r '.["images"]["qemu"]["path"]' < "${previous_builddir}/meta.json")
+if [ "${previous_qemu}" = "null" ]; then
+    fatal "A previous qemu build is required"
+fi
+echo "Basing on: ${previous_qemu}"
+
+set -x
+moddir="$(ostree ls --repo "${tmprepo}" "${previous_commit}" /usr/lib/modules | awk '{ print $5 }' | tail -1)"
+
+mkdir -p uki
+
+pushd uki
+basename "$moddir" > "uname"
+ostree --repo="${tmprepo}" checkout -U --force-copy --subpath="${moddir}/initramfs.img" "${previous_commit}" .
+ostree --repo="${tmprepo}" checkout -U --force-copy --subpath="${moddir}/vmlinuz" "${previous_commit}" .
+ostree --repo="${tmprepo}" checkout -U --force-copy --subpath="/usr/lib/os-release" "${previous_commit}" .
+
+for test_file in initramfs.img vmlinuz os-release; do
+    test -f "$test_file" || fatal "expected $test_file to be present"
+done
+
+read -r -a  kargs <<< "$("${dn}"/gf-get-kargs "${previous_builddir}/${previous_qemu}" | sed 's|qemu|metal|')"
+
+{
+    for karg in "${kargs[@]}"; do
+        [ "$karg" = "\$ignition_firstboot" ] && continue
+        [[ "$karg" != "ostree"* ]] && echo -n "$karg "
+    done
+    echo -n "ignition.firstboot"
+} > cmdline
+popd
+
+find uki -type f

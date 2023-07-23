@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-BUILD_DIR=${1:-$HOME/coreos}
+BUILDSPEC=${1:-buildspec.yml}
+BUILD_DIR=${2:-$HOME/coreos}
 
 mkdir -p build
 mkdir -p $BUILD_DIR
@@ -14,4 +15,5 @@ mkdir -p $BUILD_DIR
     -i coreos-builder -m -d \
     -a build/ \
     -e override.env \
-    -s $PWD -s CosaBuild:$BUILD_DIR
+    -s "$PWD" -s "CosaBuild:$BUILD_DIR" \
+    -b "$BUILDSPEC"

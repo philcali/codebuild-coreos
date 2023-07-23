@@ -1,6 +1,6 @@
 override.env
 codebuild_build.sh
-ccos
+builds
 build/artifacts.zip
 fedora.repo
 fedora-coreos-pool.repo

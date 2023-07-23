@@ -1,0 +1,7 @@
+variables:
+  stream: stable
+  prod: true
+
+releasever: 38
+
+include: manifests/fedora-grubless.yaml

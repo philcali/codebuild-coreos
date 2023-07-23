@@ -2,9 +2,9 @@ version: 0.2
 
 env:
   variables:
-    VARIANT: "fcos"
+    VARIANT: "fcbls"
     BUILD_TARGETS: "qemu"
-    BUILD_COMMAND: "build"
+    BUILD_COMMAND: "build-grubless"
 
 phases:
   install:
@@ -12,16 +12,15 @@ phases:
       - git config --global --add safe.directory /codebuild/output/srcDownload/src
       - git submodule update --init
       - scripts/install/01_hydrate_links.sh
+      - scripts/install/05_create_repo.sh
+  pre_build:
+    commands:
+      - scripts/pre_build/01_cosa_clean.sh
   build:
     commands:
       - scripts/build/05_build_images.sh
-      - scripts/pre_build/05_extract_uki.sh
-      - scripts/build/15_build_grubless_rpm.sh
-    finally:
-      - scripts/build/20_cleanup.sh
 artifacts:
   files:
     - builds/latest/x86_64/*
-    - builds/*.rpm
     - builds/builds.json
   discard-paths: no

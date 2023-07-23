@@ -1,0 +1,11 @@
+
+#ostree-layers:
+#  - overlay/10grubless
+
+include: fcos/fedora-coreos.yaml
+
+repos:
+  - grubless
+
+packages:
+  - grubless
